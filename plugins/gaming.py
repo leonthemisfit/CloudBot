@@ -15,6 +15,12 @@ import re
 
 from cloudbot import hook
 
+# String constants for the coin flip function
+INVALID_NUMBER = "Invalid input '{}': not a number"
+NO_COIN = "makes a coin flipping motion"
+SINGLE_COIN = "flips a coin and gets {}."
+MANY_COINS = "flips {} coins and gets {} heads and {} tails."
+
 whitespace_re = re.compile(r'\s+')
 valid_diceroll = re.compile(r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|F)))*)( .+)?$', re.I)
 sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
@@ -136,26 +142,26 @@ def choose(text, event):
 @hook.command(autohelp=False)
 def coin(text, notice, action):
     """[amount] - flips [amount] coins
-    
+
     :type text: str
     """
     if text:
         try:
             amount = int(text)
         except (ValueError, TypeError):
-            notice("Invalid input '{}': not a number".format(text))
+            notice(INVALID_NUMBER.format(text))
             return
     else:
         amount = 1
 
     if amount == 1:
-        action("flips a coin and gets {}.".format(random.choice(["heads", "tails"])))
+        action(SINGLE_COIN.format(random.choice(["heads", "tails"])))
     elif amount == 0:
-        action("makes a coin flipping motion")
+        action(NO_COIN)
     else:
         mu = .5 * amount
         sigma = (.75 * amount) ** .5
         n = random.normalvariate(mu, sigma)
         heads = clamp(int(round(n)), 0, amount)
         tails = amount - heads
-        action("flips {} coins and gets {} heads and {} tails.".format(amount, heads, tails))
+        action(MANY_COINS.format(amount, heads, tails))
