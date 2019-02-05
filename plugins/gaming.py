@@ -22,6 +22,8 @@ NO_COIN = "makes a coin flipping motion"
 SINGLE_COIN = "flips a coin and gets {}."
 MANY_COINS = "flips {} coins and gets {} heads and {} tails."
 
+ROLL_LIMIT = 100  # The maximum number of times to roll or flip before approximating results
+
 whitespace_re = re.compile(r'\s+')
 valid_diceroll = re.compile(r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|F)))*)( .+)?$', re.I)
 sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
@@ -35,9 +37,9 @@ def n_rolls(count, n):
     :type n: int | str
     """
     if n in ('f', 'F'):
-        return [random.randint(-1, 1) for _ in range(min(count, 100))]
+        return [random.randint(-1, 1) for _ in range(min(count, ROLL_LIMIT))]
 
-    if n < 100:
+    if n < ROLL_LIMIT:
         return [random.randint(1, n) for _ in range(count)]
 
     # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
@@ -148,7 +150,7 @@ def coin(text, notice, action):
         side = random.choice(['heads', 'tails'])
         action(SINGLE_COIN.format(side))
     else:
-        if amount > 100:
+        if amount < ROLL_LIMIT:
             heads = sum(random.randint(0, 1) for _ in range(amount))
         else:
             heads = int(amount * random.uniform(0.45, 0.55))
