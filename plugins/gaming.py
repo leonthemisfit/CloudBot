@@ -27,18 +27,6 @@ sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
 split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 
 
-def clamp(n, min_value, max_value):
-    """Restricts a number to a certain range of values,
-    returning the min or max value if the value is too small or large, respectively
-
-    :param n: The value to clamp
-    :param min_value: The minimum possible value
-    :param max_value: The maximum possible value
-    :return: The clamped value
-    """
-    return min(max(n, min_value), max_value)
-
-
 def n_rolls(count, n):
     """roll an n-sided die count times
 
