@@ -5,6 +5,7 @@ Dice, coins, and random generation for gaming.
 
 Modified By:
     - Luke Rogers <https://github.com/lukeroge>
+    - leonthemisfit <https://github.com/leonthemisfit>
 
 License:
     GPL v3
