@@ -24,6 +24,7 @@ split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 def clamp(n, min_value, max_value):
     """Restricts a number to a certain range of values,
     returning the min or max value if the value is too small or large, respectively
+
     :param n: The value to clamp
     :param min_value: The minimum possible value
     :param max_value: The maximum possible value
@@ -34,6 +35,7 @@ def clamp(n, min_value, max_value):
 
 def n_rolls(count, n):
     """roll an n-sided die count times
+
     :type count: int
     :type n: int | str
     """
@@ -58,7 +60,6 @@ def dice(text, notice):
 
     :type text: str
     """
-
     if hasattr(text, "groups"):
         text, desc = text.groups()
     else:  # type(text) == str
@@ -138,7 +139,6 @@ def coin(text, notice, action):
 
     :type text: str
     """
-
     if text:
         try:
             amount = int(text)
