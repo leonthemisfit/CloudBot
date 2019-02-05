@@ -145,23 +145,23 @@ def coin(text, notice, action):
 
     :type text: str
     """
+    amount = 1
     if text:
         try:
             amount = int(text)
         except (ValueError, TypeError):
             notice(INVALID_NUMBER.format(text))
             return
-    else:
-        amount = 1
 
-    if amount == 1:
-        action(SINGLE_COIN.format(random.choice(["heads", "tails"])))
-    elif amount == 0:
+    if amount == 0:
         action(NO_COIN)
+    elif amount == 1:
+        side = random.choice(['heads', 'tails'])
+        action(SINGLE_COIN.format(side))
     else:
-        mu = .5 * amount
-        sigma = (.75 * amount) ** .5
-        n = random.normalvariate(mu, sigma)
-        heads = clamp(int(round(n)), 0, amount)
+        if amount > 100:
+            heads = sum(random.randint(0, 1) for _ in range(amount))
+        else:
+            heads = int(amount * random.uniform(0.45, 0.55))
         tails = amount - heads
         action(MANY_COINS.format(amount, heads, tails))
