@@ -17,10 +17,12 @@ import re
 from cloudbot import hook
 
 # String constants for the coin flip function
-INVALID_NUMBER = "Invalid input '{}': not a number"
+INVALID_NUMBER = "Invalid input {!r}: not a number"
 NO_COIN = "makes a coin flipping motion"
 SINGLE_COIN = "flips a coin and gets {}."
 MANY_COINS = "flips {} coins and gets {} heads and {} tails."
+
+INVALID_ROLL = "Invalid dice roll {!r}"
 
 ROLL_LIMIT = 100  # The maximum number of times to roll or flip before approximating results
 
@@ -64,7 +66,7 @@ def dice(text, notice):
         if match:
             text, desc = match.groups()
         else:
-            notice("Invalid dice roll '{}'".format(text))
+            notice(INVALID_ROLL.format(text))
             return
 
     if "d" not in text:
@@ -72,7 +74,7 @@ def dice(text, notice):
 
     spec = whitespace_re.sub('', text)
     if not valid_diceroll.match(spec):
-        notice("Invalid dice roll '{}'".format(text))
+        notice(INVALID_ROLL.format(text))
         return
     groups = sign_re.findall(spec)
 
