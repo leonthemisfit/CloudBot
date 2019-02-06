@@ -41,7 +41,7 @@ def n_rolls(count, n):
     if n in ('f', 'F'):
         return [random.randint(-1, 1) for _ in range(min(count, ROLL_LIMIT))]
 
-    if n < ROLL_LIMIT:
+    if count < ROLL_LIMIT:
         return [random.randint(1, n) for _ in range(count)]
 
     # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
