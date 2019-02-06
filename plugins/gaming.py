@@ -22,6 +22,10 @@ NO_COIN = "makes a coin flipping motion"
 SINGLE_COIN = "flips a coin and gets {}."
 MANY_COINS = "flips {} coins and gets {} heads and {} tails."
 
+# Pregenerated mean and variance for fudge dice
+FUDGE_MEAN = 0
+FUDGE_VAR = 0.6667
+
 INVALID_ROLL = "Invalid dice roll {!r}"
 
 ROLL_LIMIT = 100  # The maximum number of times to roll or flip before approximating results
@@ -38,16 +42,25 @@ def n_rolls(count, n):
     :type count: int
     :type n: int | str
     """
-    if n in ('f', 'F'):
-        return [random.randint(-1, 1) for _ in range(min(count, ROLL_LIMIT))]
+    fudge = n in ('f', 'F')
 
     if count < ROLL_LIMIT:
-        return [random.randint(1, n) for _ in range(count)]
+        low = 1
+        high = n
+        if fudge:
+            low = -1
+            high = 1
+        return [random.randint(low, high) for _ in range(count)]
+
+    if fudge:
+        mid = FUDGE_MEAN
+        var = FUDGE_VAR
+    else:
+        mid = 0.5 * (n + 1) * count
+        var = (n ** 2 - 1) / 12
 
     # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
     # and an approximated standard deviation based on variance as the sigma
-    mid = .5 * (n + 1) * count
-    var = (n ** 2 - 1) / 12
     adj_var = (var * count) ** 0.5
 
     return [int(random.normalvariate(mid, adj_var))]
