@@ -36,22 +36,22 @@ sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
 split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 
 
-def n_rolls(count, n):
+def n_rolls(roll_cnt, sides):
     """roll an n-sided die count times
 
-    :type count: int
-    :type n: int | str
+    :type roll_cnt: int
+    :type sides: int | str
     """
-    fudge = n in ('f', 'F')
+    fudge = sides in ('f', 'F')
 
-    if count < ROLL_LIMIT:
+    if roll_cnt < ROLL_LIMIT:
         if fudge:
             lower = -1
             upper = 1
         else:
-            lower, upper = sorted((n, 1))
+            lower, upper = sorted((sides, 1))
 
-        return [random.randint(lower, upper) for _ in range(count)]
+        return [random.randint(lower, upper) for _ in range(roll_cnt)]
 
     # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
     # and an approximated standard deviation based on variance as the sigma
@@ -59,10 +59,10 @@ def n_rolls(count, n):
         mid = FUDGE_MEAN
         var = FUDGE_VAR
     else:
-        mid = 0.5 * (n + 1) * count
-        var = (n ** 2 - 1) / 12
+        mid = 0.5 * (sides + 1) * roll_cnt
+        var = (sides ** 2 - 1) / 12
 
-    adj_var = (var * count) ** 0.5
+    adj_var = (var * roll_cnt) ** 0.5
 
     return [int(random.normalvariate(mid, adj_var))]
 
