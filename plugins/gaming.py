@@ -50,9 +50,11 @@ def n_rolls(count, n):
             upper = 1
         else:
             lower, upper = sorted((1, n))
-            
+
         return [random.randint(lower, upper) for _ in range(count)]
 
+    # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
+    # and an approximated standard deviation based on variance as the sigma
     if fudge:
         mid = FUDGE_MEAN
         var = FUDGE_VAR
@@ -60,8 +62,6 @@ def n_rolls(count, n):
         mid = 0.5 * (n + 1) * count
         var = (n ** 2 - 1) / 12
 
-    # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
-    # and an approximated standard deviation based on variance as the sigma
     adj_var = (var * count) ** 0.5
 
     return [int(random.normalvariate(mid, adj_var))]
