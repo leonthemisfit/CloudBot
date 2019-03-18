@@ -44,8 +44,14 @@ def n_rolls(count, n):
     """
     fudge = n in ('f', 'F')
 
-    if count < 100:
-        return [random.randint(1, n) for _ in range(count)]
+    if count < ROLL_LIMIT:
+        if fudge:
+            lower = -1
+            upper = 1
+        else:
+            lower, upper = sorted((n, 1))
+
+        return [random.randint(lower, upper) for _ in range(count)]
 
     if fudge:
         mid = FUDGE_MEAN
