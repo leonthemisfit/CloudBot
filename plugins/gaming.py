@@ -5,6 +5,7 @@ Dice, coins, and random generation for gaming.
 
 Modified By:
     - Luke Rogers <https://github.com/lukeroge>
+    - leonthemisfit <https://github.com/leonthemisfit>
 
 License:
     GPL v3
@@ -15,38 +16,46 @@ import re
 
 from cloudbot import hook
 
+# String constants for the coin flip function
+INVALID_NUMBER = "Invalid input {!r}: not a number"
+NO_COIN = "makes a coin flipping motion"
+SINGLE_COIN = "flips a coin and gets {}."
+MANY_COINS = "flips {} coins and gets {} heads and {} tails."
+
+# Pregenerated mean and variance for fudge dice
+FUDGE_MEAN = 0
+FUDGE_VAR = 0.6667
+
+INVALID_ROLL = "Invalid dice roll {!r}"
+
+ROLL_LIMIT = 100  # The maximum number of times to roll or flip before approximating results
+
 whitespace_re = re.compile(r'\s+')
 valid_diceroll = re.compile(r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|F)))*)( .+)?$', re.I)
 sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
 split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 
 
-def clamp(n, min_value, max_value):
-    """Restricts a number to a certain range of values,
-    returning the min or max value if the value is too small or large, respectively
-    :param n: The value to clamp
-    :param min_value: The minimum possible value
-    :param max_value: The maximum possible value
-    :return: The clamped value
-    """
-    return min(max(n, min_value), max_value)
-
-
 def n_rolls(count, n):
     """roll an n-sided die count times
+
     :type count: int
     :type n: int | str
     """
-    if n in ('f', 'F'):
-        return [random.randint(-1, 1) for _ in range(min(count, 100))]
+    fudge = n in ('f', 'F')
 
     if count < 100:
         return [random.randint(1, n) for _ in range(count)]
 
+    if fudge:
+        mid = FUDGE_MEAN
+        var = FUDGE_VAR
+    else:
+        mid = 0.5 * (n + 1) * count
+        var = (n ** 2 - 1) / 12
+
     # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
     # and an approximated standard deviation based on variance as the sigma
-    mid = .5 * (n + 1) * count
-    var = (n ** 2 - 1) / 12
     adj_var = (var * count) ** 0.5
 
     return [int(random.normalvariate(mid, adj_var))]
@@ -58,7 +67,6 @@ def dice(text, notice):
 
     :type text: str
     """
-
     if hasattr(text, "groups"):
         text, desc = text.groups()
     else:  # type(text) == str
@@ -66,7 +74,7 @@ def dice(text, notice):
         if match:
             text, desc = match.groups()
         else:
-            notice("Invalid dice roll '{}'".format(text))
+            notice(INVALID_ROLL.format(text))
             return
 
     if "d" not in text:
@@ -74,7 +82,7 @@ def dice(text, notice):
 
     spec = whitespace_re.sub('', text)
     if not valid_diceroll.match(spec):
-        notice("Invalid dice roll '{}'".format(text))
+        notice(INVALID_ROLL.format(text))
         return
     groups = sign_re.findall(spec)
 
@@ -138,24 +146,23 @@ def coin(text, notice, action):
 
     :type text: str
     """
-
+    amount = 1
     if text:
         try:
             amount = int(text)
         except (ValueError, TypeError):
-            notice("Invalid input '{}': not a number".format(text))
+            notice(INVALID_NUMBER.format(text))
             return
-    else:
-        amount = 1
 
-    if amount == 1:
-        action("flips a coin and gets {}.".format(random.choice(["heads", "tails"])))
-    elif amount == 0:
-        action("makes a coin flipping motion")
+    if amount == 0:
+        action(NO_COIN)
+    elif amount == 1:
+        side = random.choice(['heads', 'tails'])
+        action(SINGLE_COIN.format(side))
     else:
-        mu = .5 * amount
-        sigma = (.75 * amount) ** .5
-        n = random.normalvariate(mu, sigma)
-        heads = clamp(int(round(n)), 0, amount)
+        if amount < ROLL_LIMIT:
+            heads = sum(random.randint(0, 1) for _ in range(amount))
+        else:
+            heads = int(amount * random.uniform(0.45, 0.55))
         tails = amount - heads
-        action("flips {} coins and gets {} heads and {} tails.".format(amount, heads, tails))
+        action(MANY_COINS.format(amount, heads, tails))
