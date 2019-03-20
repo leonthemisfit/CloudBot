@@ -41,6 +41,7 @@ def n_rolls(roll_cnt, sides):
 
     :type roll_cnt: int
     :type sides: int | str
+    :rtype: list[int]
     """
     fudge = sides in ('f', 'F')
 
