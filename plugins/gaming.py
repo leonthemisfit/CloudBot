@@ -120,9 +120,11 @@ def n_rolls(roll_cnt, sides):
     fudge = sides in ('f', 'F')
 
     if roll_cnt < ROLL_LIMIT:
-        return simulate_rolls(roll_cnt, sides, fudge)
+        values = simulate_rolls(roll_cnt, sides, fudge)
     else:
-        return approximate_rolls(roll_cnt, sides, fudge)
+        values = approximate_rolls(roll_cnt, sides, fudge)
+
+    return values
 
 
 @hook.command("roll", "dice")
