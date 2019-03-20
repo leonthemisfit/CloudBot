@@ -44,7 +44,7 @@ def find_midpoint(sides, roll_cnt):
     :rtype: float
 
     >>> [find_midpoint(s, r) for s, r in [(6, 1), (6, 2), (12, 1), (12, 2)]]
-    [3.5, 7, 6.5, 13]
+    [3.5, 7.0, 6.5, 13.0]
     """
     return 0.5 * (sides + 1) * roll_cnt
 
