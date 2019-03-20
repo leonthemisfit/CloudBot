@@ -36,6 +36,45 @@ sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
 split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 
 
+def find_midpoint(sides, roll_cnt):
+    """find the midpoint for a die with n rolls
+
+    :type sides: int
+    :type roll_cnt: int
+    :rtype: float
+    """
+    return 0.5 * (sides + 1) * roll_cnt
+
+
+def find_variance(sides):
+    """find the variance for a die with n sides
+
+    :type sides: int
+    :rtype: float
+    """
+    return (sides ** 2 - 1) / 12
+
+
+def find_mid_var(sides, roll_cnt):
+    """find the midpoint and variance for a die with x sides and y rolls
+
+    :type sides: int
+    :type roll_cnt: int
+    :rtype: (float, float)
+    """
+    return find_midpoint(sides, roll_cnt), find_variance(sides)
+
+
+def find_adjusted_variance(variance, roll_cnt):
+    """find the variance adjusted for the number of rolls
+
+    :type variance: float
+    :type roll_cnt: int
+    :rtype: float
+    """
+    return (variance * roll_cnt) ** 0.5
+
+
 def n_rolls(roll_cnt, sides):
     """roll an n-sided die count times
 
@@ -60,10 +99,9 @@ def n_rolls(roll_cnt, sides):
         mid = FUDGE_MEAN
         var = FUDGE_VAR
     else:
-        mid = 0.5 * (sides + 1) * roll_cnt
-        var = (sides ** 2 - 1) / 12
+        mid, var = find_mid_var(sides, roll_cnt)
 
-    adj_var = (var * roll_cnt) ** 0.5
+    adj_var = find_adjusted_variance(var, roll_cnt)
 
     return [round(random.normalvariate(mid, adj_var))]
 
