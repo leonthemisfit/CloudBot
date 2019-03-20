@@ -42,6 +42,9 @@ def find_midpoint(sides, roll_cnt):
     :type sides: int
     :type roll_cnt: int
     :rtype: float
+
+    >>> [find_midpoint(s, r) for s, r in [(6, 1), (6, 2), (12, 1), (12, 2)]]
+    [3.5, 7, 6.5, 13]
     """
     return 0.5 * (sides + 1) * roll_cnt
 
@@ -51,6 +54,9 @@ def find_variance(sides):
 
     :type sides: int
     :rtype: float
+
+    >>> [find_variance(s) for s in [3, 4, 5, 6, 20, 50]]
+    [0.6667, 1.25, 2.0, 2.9167, 33.25, 208.25]
     """
     return round((sides ** 2 - 1) / 12, 4)
 
@@ -61,6 +67,9 @@ def find_mid_var(sides, roll_cnt):
     :type sides: int
     :type roll_cnt: int
     :rtype: (float, float)
+
+    >>> [find_mid_var(s, r) for s, r in [(6, 1), (6, 2), (12, 1), (12, 2)]]
+    [(3.5, 2.9167), (7.0, 2.9167), (6.5, 11.9167), (13.0, 11.9167)]
     """
     return find_midpoint(sides, roll_cnt), find_variance(sides)
 
@@ -71,6 +80,9 @@ def find_adjusted_variance(variance, roll_cnt):
     :type variance: float
     :type roll_cnt: int
     :rtype: float
+
+    >>> [find_adjusted_variance(find_variance(s), r) for s, r in [(6, 1), (6, 2), (12, 1), (12, 2)]]
+    [1.7078, 2.4152, 3.4521, 4.8819]
     """
     return round((variance * roll_cnt) ** 0.5, 4)
 
