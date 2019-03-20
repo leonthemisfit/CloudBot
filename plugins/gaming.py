@@ -72,7 +72,7 @@ def find_adjusted_variance(variance, roll_cnt):
     :type roll_cnt: int
     :rtype: float
     """
-    return (variance * roll_cnt) ** 0.5
+    return round((variance * roll_cnt) ** 0.5, 4)
 
 
 def approximate_rolls(roll_cnt, sides, fudge):
