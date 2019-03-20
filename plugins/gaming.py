@@ -93,6 +93,23 @@ def approximate_rolls(roll_cnt, sides, fudge):
     return [round(random.normalvariate(mid, adj_var))]
 
 
+def simulate_rolls(roll_cnt, sides, fudge):
+    """simulate rolling a dice
+
+    :type roll_cnt: int
+    :type sides: int | str
+    :type fudge: bool
+    :rtype: list(int)
+    """
+    if fudge:
+        lower = -1
+        upper = 1
+    else:
+        lower, upper = sorted((sides, 1))
+
+    return [random.randint(lower, upper) for _ in range(roll_cnt)]
+
+
 def n_rolls(roll_cnt, sides):
     """roll an n-sided die count times
 
@@ -103,15 +120,9 @@ def n_rolls(roll_cnt, sides):
     fudge = sides in ('f', 'F')
 
     if roll_cnt < ROLL_LIMIT:
-        if fudge:
-            lower = -1
-            upper = 1
-        else:
-            lower, upper = sorted((sides, 1))
-
-        return [random.randint(lower, upper) for _ in range(roll_cnt)]
-
-    return approximate_rolls(roll_cnt, sides, fudge)
+        return simulate_rolls(roll_cnt, sides, fudge)
+    else:
+        return approximate_rolls(roll_cnt, sides, fudge)
 
 
 @hook.command("roll", "dice")
