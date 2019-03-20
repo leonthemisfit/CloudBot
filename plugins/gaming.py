@@ -64,7 +64,7 @@ def n_rolls(roll_cnt, sides):
 
     adj_var = (var * roll_cnt) ** 0.5
 
-    return [int(random.normalvariate(mid, adj_var))]
+    return [round(random.normalvariate(mid, adj_var))]
 
 
 @hook.command("roll", "dice")
@@ -169,6 +169,6 @@ def coin(text, notice, action):
         if amount < ROLL_LIMIT:
             heads = sum(random.randint(0, 1) for _ in range(amount))
         else:
-            heads = int(amount * random.uniform(0.45, 0.55))
+            heads = round(amount * random.uniform(0.45, 0.55))
         tails = amount - heads
         action(MANY_COINS.format(amount, heads, tails))
