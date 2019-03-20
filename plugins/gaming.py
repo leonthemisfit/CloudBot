@@ -75,6 +75,24 @@ def find_adjusted_variance(variance, roll_cnt):
     return (variance * roll_cnt) ** 0.5
 
 
+def approximate_rolls(roll_cnt, sides, fudge):
+    """approximate a sum based on a random normal variate using the midpoint as the mu and variance as the sigma
+
+    :type roll_cnt: int
+    :type sides: int | str
+    :type fudge: bool
+    :rtype: list(int)"""
+    if fudge:
+        mid = FUDGE_MEAN
+        var = FUDGE_VAR
+    else:
+        mid, var = find_mid_var(sides, roll_cnt)
+
+    adj_var = find_adjusted_variance(var, roll_cnt)
+
+    return [round(random.normalvariate(mid, adj_var))]
+
+
 def n_rolls(roll_cnt, sides):
     """roll an n-sided die count times
 
@@ -93,17 +111,7 @@ def n_rolls(roll_cnt, sides):
 
         return [random.randint(lower, upper) for _ in range(roll_cnt)]
 
-    # Calculate a random sum approximated using a randomized normal variate with the midpoint used as the mu
-    # and an approximated standard deviation based on variance as the sigma
-    if fudge:
-        mid = FUDGE_MEAN
-        var = FUDGE_VAR
-    else:
-        mid, var = find_mid_var(sides, roll_cnt)
-
-    adj_var = find_adjusted_variance(var, roll_cnt)
-
-    return [round(random.normalvariate(mid, adj_var))]
+    return approximate_rolls(roll_cnt, sides, fudge)
 
 
 @hook.command("roll", "dice")
