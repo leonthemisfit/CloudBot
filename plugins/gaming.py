@@ -52,7 +52,7 @@ def find_variance(sides):
     :type sides: int
     :rtype: float
     """
-    return (sides ** 2 - 1) / 12
+    return round((sides ** 2 - 1) / 12, 4)
 
 
 def find_mid_var(sides, roll_cnt):
